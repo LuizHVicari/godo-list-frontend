@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
-import { Controller, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
@@ -14,9 +14,8 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
-import { PasswordInput } from '@/components/ui/password-input';
-import { Input } from '@/components/ui/input';
+import { FieldGroup } from '@/components/ui/field';
+import { FormInput, FormPasswordInput } from '@/components/ui/form';
 
 const signUpSchema = z
   .object({
@@ -65,56 +64,27 @@ function SignUpPage() {
       <form className="contents" onSubmit={form.handleSubmit(handleSubmit)}>
         <CardContent className="flex flex-col gap-4">
           <FieldGroup>
-            <Controller
+            <FormInput
               control={form.control}
+              id="sign-up-email"
+              label="Email"
               name="email"
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="sign-up-email">Email</FieldLabel>
-                  <Input
-                    id="sign-up-email"
-                    type="email"
-                    aria-invalid={fieldState.invalid}
-                    placeholder="voce@exemplo.com"
-                    {...field}
-                  />
-                  <FieldError errors={[fieldState.error]} />
-                </Field>
-              )}
+              placeholder="voce@exemplo.com"
+              type="email"
             />
-
-            <Controller
+            <FormPasswordInput
               control={form.control}
+              id="sign-up-password"
+              label="Senha"
               name="password"
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="sign-up-password">Senha</FieldLabel>
-                  <PasswordInput
-                    id="sign-up-password"
-                    aria-invalid={fieldState.invalid}
-                    placeholder="Mínimo 6 caracteres"
-                    {...field}
-                  />
-                  <FieldError errors={[fieldState.error]} />
-                </Field>
-              )}
+              placeholder="Mínimo 6 caracteres"
             />
-
-            <Controller
+            <FormPasswordInput
               control={form.control}
+              id="sign-up-confirm-password"
+              label="Confirmar senha"
               name="confirmPassword"
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="sign-up-confirm-password">Confirmar senha</FieldLabel>
-                  <PasswordInput
-                    id="sign-up-confirm-password"
-                    aria-invalid={fieldState.invalid}
-                    placeholder="Repita a senha"
-                    {...field}
-                  />
-                  <FieldError errors={[fieldState.error]} />
-                </Field>
-              )}
+              placeholder="Repita a senha"
             />
           </FieldGroup>
         </CardContent>

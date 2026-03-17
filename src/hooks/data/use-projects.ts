@@ -1,15 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { listProjects } from '@/api/projects';
-
-export const projectQueryKeys = {
-  all: ['projects'] as const,
-  detail: (id: string) => ['projects', id] as const,
-};
+import { queryKeys } from '@/hooks/query-keys';
 
 export function useListProjects() {
   return useQuery({
-    queryKey: projectQueryKeys.all,
+    queryKey: queryKeys.projects.all,
     queryFn: listProjects,
   });
 }

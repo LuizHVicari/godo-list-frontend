@@ -1,9 +1,4 @@
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Controller, useForm } from 'react-hook-form';
-import { z } from 'zod';
-
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
 import {
   Dialog,
   DialogContent,
@@ -11,38 +6,18 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
-import { Input } from '@/components/ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
-import {
-  useCreateItem,
-  useUpdateItem,
-} from '@/hooks/interactions/use-item-mutations';
+import { FieldGroup } from '@/components/ui/field';
+import { FormCheckbox, FormInput, FormSelect, FormTextarea } from '@/components/ui/form';
+import { useItemForm } from '@/hooks/interactions/use-item-form';
 import type { ItemPriority, ItemResponse } from '@/types/api';
 
-const itemSchema = z.object({
-  name: z.string().min(1, 'Nome é obrigatório'),
-  description: z.string().optional(),
-  priority: z.enum(['none', 'low', 'medium', 'high', 'critical'] as const),
-  is_completed: z.boolean(),
-});
-
-type ItemFormValues = z.infer<typeof itemSchema>;
-
-const priorityLabels: Record<ItemPriority, string> = {
-  none: 'Nenhuma',
-  low: 'Baixa',
-  medium: 'Média',
-  high: 'Alta',
-  critical: 'Crítica',
-};
+const priorityOptions: { value: ItemPriority; label: string }[] = [
+  { value: 'none', label: 'Nenhuma' },
+  { value: 'low', label: 'Baixa' },
+  { value: 'medium', label: 'Média' },
+  { value: 'high', label: 'Alta' },
+  { value: 'critical', label: 'Crítica' },
+];
 
 interface ItemModalProperties {
   projectId: string;
@@ -63,42 +38,14 @@ export function ItemModal({
   onOpenChange,
   onSuccess,
 }: ItemModalProperties) {
-  const createItem = useCreateItem(projectId, stepId);
-  const updateItem = useUpdateItem(projectId, stepId);
-
-  const form = useForm<ItemFormValues>({
-    resolver: zodResolver(itemSchema),
-    defaultValues: {
-      name: defaultValues?.name ?? '',
-      description: defaultValues?.description ?? '',
-      priority: defaultValues?.priority ?? 'none',
-      is_completed: defaultValues?.is_completed ?? false,
-    },
+  const { form, handleSubmit, isPending } = useItemForm({
+    projectId,
+    stepId,
+    mode,
+    defaultValues,
+    onSuccess,
+    onOpenChange,
   });
-
-  function handleSubmit(values: ItemFormValues) {
-    if (mode === 'create') {
-      createItem.mutate(values, {
-        onSuccess: () => {
-          form.reset();
-          onOpenChange(false);
-          onSuccess?.();
-        },
-      });
-    } else if (defaultValues) {
-      updateItem.mutate(
-        { id: defaultValues.id, data: { ...values, position: defaultValues.position } },
-        {
-          onSuccess: () => {
-            onOpenChange(false);
-            onSuccess?.();
-          },
-        },
-      );
-    }
-  }
-
-  const isPending = createItem.isPending || updateItem.isPending;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -109,81 +56,32 @@ export function ItemModal({
 
         <form className="space-y-4" onSubmit={form.handleSubmit(handleSubmit)}>
           <FieldGroup>
-            <Controller
+            <FormInput
               control={form.control}
+              id="item-name"
+              label="Nome"
               name="name"
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="item-name">Nome</FieldLabel>
-                  <Input
-                    id="item-name"
-                    aria-invalid={fieldState.invalid}
-                    placeholder="Nome do item"
-                    {...field}
-                  />
-                  <FieldError errors={[fieldState.error]} />
-                </Field>
-              )}
+              placeholder="Nome do item"
             />
-
-            <Controller
+            <FormTextarea
               control={form.control}
+              id="item-description"
+              label="Descrição"
               name="description"
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="item-description">Descrição</FieldLabel>
-                  <Textarea
-                    id="item-description"
-                    aria-invalid={fieldState.invalid}
-                    placeholder="Descrição opcional"
-                    rows={3}
-                    {...field}
-                  />
-                  <FieldError errors={[fieldState.error]} />
-                </Field>
-              )}
+              placeholder="Descrição opcional"
+              rows={3}
             />
-
-            <Controller
+            <FormSelect
               control={form.control}
+              label="Prioridade"
               name="priority"
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel>Prioridade</FieldLabel>
-                  <Select value={field.value} onValueChange={field.onChange}>
-                    <SelectTrigger aria-invalid={fieldState.invalid}>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {(
-                        ['none', 'low', 'medium', 'high', 'critical'] as ItemPriority[]
-                      ).map((priority) => (
-                        <SelectItem key={priority} value={priority}>
-                          {priorityLabels[priority]}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FieldError errors={[fieldState.error]} />
-                </Field>
-              )}
+              options={priorityOptions}
             />
-
-            <Controller
+            <FormCheckbox
               control={form.control}
+              id="item-completed"
+              label="Concluído"
               name="is_completed"
-              render={({ field }) => (
-                <Field>
-                  <div className="flex items-center gap-2">
-                    <Checkbox
-                      checked={field.value}
-                      id="item-completed"
-                      onCheckedChange={field.onChange}
-                    />
-                    <FieldLabel htmlFor="item-completed">Concluído</FieldLabel>
-                  </div>
-                </Field>
-              )}
             />
           </FieldGroup>
 

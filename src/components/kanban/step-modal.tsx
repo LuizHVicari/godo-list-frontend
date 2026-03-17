@@ -1,7 +1,3 @@
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Controller, useForm } from 'react-hook-form';
-import { z } from 'zod';
-
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -10,19 +6,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
-import { Input } from '@/components/ui/input';
-import {
-  useCreateStep,
-  useUpdateStep,
-} from '@/hooks/interactions/use-step-mutations';
+import { FieldGroup } from '@/components/ui/field';
+import { FormInput } from '@/components/ui/form';
+import { useStepForm } from '@/hooks/interactions/use-step-form';
 import type { StepResponse } from '@/types/api';
-
-const stepSchema = z.object({
-  name: z.string().min(1, 'Nome é obrigatório'),
-});
-
-type StepFormValues = z.infer<typeof stepSchema>;
 
 interface StepModalProperties {
   projectId: string;
@@ -41,37 +28,13 @@ export function StepModal({
   onOpenChange,
   onSuccess,
 }: StepModalProperties) {
-  const createStep = useCreateStep(projectId);
-  const updateStep = useUpdateStep(projectId);
-
-  const form = useForm<StepFormValues>({
-    resolver: zodResolver(stepSchema),
-    defaultValues: { name: defaultValues?.name ?? '' },
+  const { form, handleSubmit, isPending } = useStepForm({
+    projectId,
+    mode,
+    defaultValues,
+    onSuccess,
+    onOpenChange,
   });
-
-  function handleSubmit(values: StepFormValues) {
-    if (mode === 'create') {
-      createStep.mutate(values, {
-        onSuccess: () => {
-          form.reset();
-          onOpenChange(false);
-          onSuccess?.();
-        },
-      });
-    } else if (defaultValues) {
-      updateStep.mutate(
-        { id: defaultValues.id, data: { ...values, position: defaultValues.position } },
-        {
-          onSuccess: () => {
-            onOpenChange(false);
-            onSuccess?.();
-          },
-        },
-      );
-    }
-  }
-
-  const isPending = createStep.isPending || updateStep.isPending;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -82,21 +45,12 @@ export function StepModal({
 
         <form className="space-y-4" onSubmit={form.handleSubmit(handleSubmit)}>
           <FieldGroup>
-            <Controller
+            <FormInput
               control={form.control}
+              id="step-name"
+              label="Nome"
               name="name"
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="step-name">Nome</FieldLabel>
-                  <Input
-                    id="step-name"
-                    aria-invalid={fieldState.invalid}
-                    placeholder="Nome da etapa"
-                    {...field}
-                  />
-                  <FieldError errors={[fieldState.error]} />
-                </Field>
-              )}
+              placeholder="Nome da etapa"
             />
           </FieldGroup>
 

@@ -33,11 +33,7 @@ export async function updateItem(
   await api.put(`v1/items/${id}`, { json: data });
 }
 
-export async function deleteItem(
-  _projectId: string,
-  _stepId: string,
-  id: string,
-): Promise<void> {
+export async function deleteItem(_projectId: string, _stepId: string, id: string): Promise<void> {
   await api.delete(`v1/items/${id}`);
 }
 

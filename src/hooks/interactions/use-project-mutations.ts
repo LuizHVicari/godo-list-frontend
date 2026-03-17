@@ -2,13 +2,9 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
 import { createProject, deleteProject, updateProject } from '@/api/projects';
-import type {
-  CreateProjectRequest,
-  ListProjectsResponse,
-  UpdateProjectRequest,
-} from '@/types/api';
+import type { CreateProjectRequest, ListProjectsResponse, UpdateProjectRequest } from '@/types/api';
 
-import { projectQueryKeys } from '../data/use-projects';
+import { queryKeys } from '@/hooks/query-keys';
 
 export function useCreateProject() {
   const queryClient = useQueryClient();
@@ -22,7 +18,7 @@ export function useCreateProject() {
       toast.error('Erro ao criar projeto.');
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: projectQueryKeys.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.projects.all });
     },
   });
 }
@@ -34,9 +30,9 @@ export function useUpdateProject() {
     mutationFn: ({ id, data }: { id: string; data: UpdateProjectRequest }) =>
       updateProject(id, data),
     onMutate: async ({ id, data }) => {
-      await queryClient.cancelQueries({ queryKey: projectQueryKeys.all });
-      const previous = queryClient.getQueryData<ListProjectsResponse>(projectQueryKeys.all);
-      queryClient.setQueryData<ListProjectsResponse>(projectQueryKeys.all, (old) =>
+      await queryClient.cancelQueries({ queryKey: queryKeys.projects.all });
+      const previous = queryClient.getQueryData<ListProjectsResponse>(queryKeys.projects.all);
+      queryClient.setQueryData<ListProjectsResponse>(queryKeys.projects.all, (old) =>
         old
           ? { ...old, results: old.results.map((p) => (p.id === id ? { ...p, ...data } : p)) }
           : old,
@@ -48,12 +44,12 @@ export function useUpdateProject() {
     },
     onError: (_error, _variables, context) => {
       if (context?.previous) {
-        queryClient.setQueryData(projectQueryKeys.all, context.previous);
+        queryClient.setQueryData(queryKeys.projects.all, context.previous);
       }
       toast.error('Erro ao atualizar projeto.');
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: projectQueryKeys.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.projects.all });
     },
   });
 }
@@ -64,9 +60,9 @@ export function useDeleteProject() {
   return useMutation({
     mutationFn: (id: string) => deleteProject(id),
     onMutate: async (id) => {
-      await queryClient.cancelQueries({ queryKey: projectQueryKeys.all });
-      const previous = queryClient.getQueryData<ListProjectsResponse>(projectQueryKeys.all);
-      queryClient.setQueryData<ListProjectsResponse>(projectQueryKeys.all, (old) =>
+      await queryClient.cancelQueries({ queryKey: queryKeys.projects.all });
+      const previous = queryClient.getQueryData<ListProjectsResponse>(queryKeys.projects.all);
+      queryClient.setQueryData<ListProjectsResponse>(queryKeys.projects.all, (old) =>
         old
           ? { ...old, results: old.results.filter((p) => p.id !== id), total: old.total - 1 }
           : old,
@@ -78,12 +74,12 @@ export function useDeleteProject() {
     },
     onError: (_error, _variables, context) => {
       if (context?.previous) {
-        queryClient.setQueryData(projectQueryKeys.all, context.previous);
+        queryClient.setQueryData(queryKeys.projects.all, context.previous);
       }
       toast.error('Erro ao remover projeto.');
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: projectQueryKeys.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.projects.all });
     },
   });
 }

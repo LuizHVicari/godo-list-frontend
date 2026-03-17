@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
 import { createItem, deleteItem, repositionItems, updateItem } from '@/api/items';
+import { queryKeys } from '@/hooks/query-keys';
 import type {
   CreateItemRequest,
   ListItemsResponse,
@@ -9,11 +10,9 @@ import type {
   UpdateItemRequest,
 } from '@/types/api';
 
-import { itemQueryKeys } from '../data/use-items';
-
 export function useCreateItem(projectId: string, stepId: string) {
   const queryClient = useQueryClient();
-  const queryKey = itemQueryKeys.all(projectId, stepId);
+  const queryKey = queryKeys.items.all(projectId, stepId);
 
   return useMutation({
     mutationFn: (data: CreateItemRequest) => createItem(projectId, stepId, data),
@@ -31,7 +30,7 @@ export function useCreateItem(projectId: string, stepId: string) {
 
 export function useUpdateItem(projectId: string, stepId: string) {
   const queryClient = useQueryClient();
-  const queryKey = itemQueryKeys.all(projectId, stepId);
+  const queryKey = queryKeys.items.all(projectId, stepId);
 
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: UpdateItemRequest }) =>
@@ -61,7 +60,7 @@ export function useUpdateItem(projectId: string, stepId: string) {
 
 export function useDeleteItem(projectId: string, stepId: string) {
   const queryClient = useQueryClient();
-  const queryKey = itemQueryKeys.all(projectId, stepId);
+  const queryKey = queryKeys.items.all(projectId, stepId);
 
   return useMutation({
     mutationFn: (id: string) => deleteItem(projectId, stepId, id),
@@ -90,7 +89,7 @@ export function useDeleteItem(projectId: string, stepId: string) {
 
 export function useRepositionItems(projectId: string, stepId: string) {
   const queryClient = useQueryClient();
-  const queryKey = itemQueryKeys.all(projectId, stepId);
+  const queryKey = queryKeys.items.all(projectId, stepId);
 
   return useMutation({
     mutationFn: (data: RepositionItemsRequest) => repositionItems(projectId, stepId, data),

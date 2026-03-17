@@ -3,7 +3,6 @@ import { CSS } from '@dnd-kit/utilities';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { GripVerticalIcon } from 'lucide-react';
 
-
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utilities';
@@ -31,8 +30,7 @@ const priorityLabels: Record<ItemPriority, string> = {
 };
 
 interface KanbanItemCardProperties
-  extends React.ComponentProps<typeof Card>,
-    VariantProps<typeof priorityVariants> {
+  extends React.ComponentProps<typeof Card>, VariantProps<typeof priorityVariants> {
   item: ItemResponse;
   onEdit: () => void;
 }
@@ -52,7 +50,10 @@ export function KanbanItemCard({ item, onEdit, className, ...rest }: KanbanItemC
   return (
     <Card
       ref={setNodeRef}
-      className={cn('cursor-grab touch-none transition-shadow hover:shadow-md active:cursor-grabbing', className)}
+      className={cn(
+        'cursor-grab touch-none transition-shadow hover:shadow-md active:cursor-grabbing',
+        className,
+      )}
       style={style}
       {...attributes}
       {...listeners}
@@ -63,7 +64,10 @@ export function KanbanItemCard({ item, onEdit, className, ...rest }: KanbanItemC
 
         <div className="min-w-0 flex-1 space-y-1">
           <p
-            className={cn('text-sm font-medium leading-snug', item.is_completed && 'line-through text-muted-foreground')}
+            className={cn(
+              'text-sm leading-snug font-medium',
+              item.is_completed && 'text-muted-foreground line-through',
+            )}
           >
             {item.name}
           </p>

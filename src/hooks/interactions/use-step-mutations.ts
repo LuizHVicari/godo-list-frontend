@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
 import { createStep, deleteStep, repositionSteps, updateStep } from '@/api/steps';
+import { queryKeys } from '@/hooks/query-keys';
 import type {
   CreateStepRequest,
   ListStepsResponse,
@@ -9,11 +10,9 @@ import type {
   UpdateStepRequest,
 } from '@/types/api';
 
-import { stepQueryKeys } from '../data/use-steps';
-
 export function useCreateStep(projectId: string) {
   const queryClient = useQueryClient();
-  const queryKey = stepQueryKeys.all(projectId);
+  const queryKey = queryKeys.steps.all(projectId);
 
   return useMutation({
     mutationFn: (data: CreateStepRequest) => createStep(projectId, data),
@@ -31,7 +30,7 @@ export function useCreateStep(projectId: string) {
 
 export function useUpdateStep(projectId: string) {
   const queryClient = useQueryClient();
-  const queryKey = stepQueryKeys.all(projectId);
+  const queryKey = queryKeys.steps.all(projectId);
 
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: UpdateStepRequest }) =>
@@ -61,7 +60,7 @@ export function useUpdateStep(projectId: string) {
 
 export function useDeleteStep(projectId: string) {
   const queryClient = useQueryClient();
-  const queryKey = stepQueryKeys.all(projectId);
+  const queryKey = queryKeys.steps.all(projectId);
 
   return useMutation({
     mutationFn: (id: string) => deleteStep(projectId, id),
@@ -90,7 +89,7 @@ export function useDeleteStep(projectId: string) {
 
 export function useRepositionSteps(projectId: string) {
   const queryClient = useQueryClient();
-  const queryKey = stepQueryKeys.all(projectId);
+  const queryKey = queryKeys.steps.all(projectId);
 
   return useMutation({
     mutationFn: (data: RepositionStepsRequest) => repositionSteps(projectId, data),

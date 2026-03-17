@@ -1,10 +1,4 @@
-import { useState } from 'react';
-
-import {
-  SortableContext,
-  useSortable,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable';
+import { SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import {
   GripVerticalIcon,
@@ -13,6 +7,7 @@ import {
   PlusIcon,
   Trash2Icon,
 } from 'lucide-react';
+import { useState } from 'react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -118,14 +113,10 @@ export function KanbanColumn({ projectId, step }: KanbanColumnProperties) {
             </>
           ) : (
             <SortableContext items={itemIds} strategy={verticalListSortingStrategy}>
-                {items.map((item) => (
-                  <KanbanItemCard
-                    key={item.id}
-                    item={item}
-                    onEdit={() => setEditingItem(item)}
-                  />
-                ))}
-              </SortableContext>
+              {items.map((item) => (
+                <KanbanItemCard key={item.id} item={item} onEdit={() => setEditingItem(item)} />
+              ))}
+            </SortableContext>
           )}
         </div>
       </div>

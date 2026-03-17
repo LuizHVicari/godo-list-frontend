@@ -1,9 +1,9 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { ArrowLeftIcon } from 'lucide-react';
 
+import { KanbanBoard } from '@/components/kanban/kanban-board';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { KanbanBoard } from '@/components/kanban/kanban-board';
 import { useFindProject } from '@/hooks/data/use-project';
 import { useListSteps } from '@/hooks/data/use-steps';
 

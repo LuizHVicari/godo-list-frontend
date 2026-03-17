@@ -64,7 +64,7 @@ export default [
 
       // Code quality rules
       'sonarjs/prefer-read-only-props': 'off',
-      'unicorn/filename-case': ['error', { case: 'kebabCase' }],
+      'unicorn/filename-case': ['error', { case: 'kebabCase', ignore: [/^\$[a-z]/] }],
       'unicorn/prevent-abbreviations': 'error',
 
       // Essential code quality

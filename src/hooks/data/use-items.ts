@@ -1,15 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { listItems } from '@/api/items';
-
-export const itemQueryKeys = {
-  all: (projectId: string, stepId: string) =>
-    ['projects', projectId, 'steps', stepId, 'items'] as const,
-};
+import { queryKeys } from '@/hooks/query-keys';
 
 export function useListItems(projectId: string, stepId: string) {
   return useQuery({
-    queryKey: itemQueryKeys.all(projectId, stepId),
+    queryKey: queryKeys.items.all(projectId, stepId),
     queryFn: () => listItems(projectId, stepId),
     enabled: !!projectId && !!stepId,
     select: (data) => ({

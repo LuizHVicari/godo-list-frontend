@@ -20,7 +20,7 @@ export function Header({ email, className, ...rest }: HeaderProperties) {
       className={`flex items-center justify-between border-b px-6 py-3 ${className ?? ''}`}
       {...rest}
     >
-      <span className="font-semibold text-lg">Godo List</span>
+      <span className="text-lg font-semibold">Godo List</span>
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -31,7 +31,7 @@ export function Header({ email, className, ...rest }: HeaderProperties) {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuItem className="text-xs text-muted-foreground" disabled>
+          <DropdownMenuItem disabled className="text-xs text-muted-foreground">
             {email}
           </DropdownMenuItem>
           <DropdownMenuItem disabled={isPending} onClick={() => signOut()}>

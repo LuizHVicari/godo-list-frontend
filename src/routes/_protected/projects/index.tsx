@@ -1,12 +1,11 @@
-import { useState } from 'react';
-
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { PlusIcon } from 'lucide-react';
+import { useState } from 'react';
 
-import { Button } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
 import { ProjectCard } from '@/components/projects/project-card';
 import { ProjectModal } from '@/components/projects/project-modal';
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import { useListProjects } from '@/hooks/data/use-projects';
 import { useDeleteProject } from '@/hooks/interactions/use-project-mutations';
 import type { ProjectResponse } from '@/types/api';
@@ -75,11 +74,7 @@ function ProjectsPage() {
         </div>
       )}
 
-      <ProjectModal
-        mode="create"
-        open={isCreateOpen}
-        onOpenChange={setIsCreateOpen}
-      />
+      <ProjectModal mode="create" open={isCreateOpen} onOpenChange={setIsCreateOpen} />
 
       {editingProject && (
         <ProjectModal
